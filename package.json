@@ -1,0 +1,35 @@
+{
+  "name": "vouch",
+  "version": "0.1.0",
+  "description": "Track and manage your online purchases in one place",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "next": "^14.2.3",
+    "next-auth": "^5.0.0",
+    "googleapis": "^140.0.0",
+    "google-auth-library": "^9.14.1",
+    "@supabase/supabase-js": "^2.43.0",
+    "tailwindcss": "^3.4.1",
+    "shadcn-ui": "^0.8.0",
+    "cheerio": "^1.0.0-rc.12",
+    "axios": "^1.7.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.6",
+    "@types/react": "^18.2.46",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.3"
+  }
+}
