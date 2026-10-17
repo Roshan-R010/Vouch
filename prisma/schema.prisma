@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Auth fields
+  googleId      String?    @unique
+  googleEmail   String?
+
+  // Gmail integration
+  gmailAccessToken  String?
+  gmailRefreshToken String?
+  gmailExpiresAt    DateTime?
+
+  // Timestamps
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  purchases     Purchase[]
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Purchase {
+  id            String   @id @default(cuid())
+  userId        String
+
+  // Order details
+  orderId       String   @unique
+  retailer      String   // Amazon, Flipkart, Meesho, Myntra, eBay, Shopify, Others
+  productTitle  String
+  amount        Decimal  @db.Decimal(10, 2)
+  currency      String   @default("INR")
+  orderDate     DateTime
+
+  // Images & Content
+  productImage  String?
+
+  // Email source
+  emailId       String?  @unique // Gmail message ID
+  emailSubject  String?
+  emailFrom     String?
+  emailBody     String?  @db.Text // Store parsed content, not raw HTML
+
+  // Optional purchase metadata
+  productUrl    String?
+  orderId2      String?  // Some retailers have multiple order IDs
+  estimatedDelivery DateTime?
+  deliveryDate  DateTime?
+
+  // Warranty info (for future use)
+  warrantyExpiry DateTime?
+  warrantyStatus String?  // Active, Expired, None
+
+  // Return info (for future use)
+  returnEligible Boolean @default(false)
+  returnDeadline DateTime?
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([retailer])
+  @@index([orderDate])
+}
+
+model ParsedEmail {
+  id            String   @id @default(cuid())
+
+  // Email details
+  gmailMessageId String  @unique
+  userId        String
+  from          String
+  subject       String
+  sentDate      DateTime
+
+  // Parsing result
+  retailer      String?
+  orderId       String?
+  productTitle  String?
+  amount        Decimal? @db.Decimal(10, 2)
+  currency      String?
+  productImage  String?
+
+  // Raw content (for debugging)
+  rawContent    String?  @db.Text
+  parseError    String?  // If parsing failed, store error message
+
+  // Status
+  processed     Boolean  @default(false)
+  purchased     Boolean  @default(false) // true if converted to Purchase record
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([retailer])
+  @@index([processed])
+}
+
+model GmailSync {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+
+  // Sync progress
+  lastSyncTime  DateTime?
+  lastHistoryId String?
+
+  // Status
+  syncStatus    String   @default("idle") // idle, syncing, error
+  lastError     String?
+
+  // Counts
+  totalEmails   Int      @default(0)
+  parsedEmails  Int      @default(0)
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
