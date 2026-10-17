@@ -16,6 +16,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #ffffff;
   color: #333333;
+   min-height: 100%;
+  margin: 0;
+  overflow-y: auto;
 }
 
 a {
@@ -25,4 +28,9 @@ a {
 
 a:hover {
   opacity: 0.8;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
 }
