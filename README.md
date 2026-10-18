@@ -58,7 +58,7 @@ You'll need:
 ### 3. Set Up Database (Supabase)
 
 - Create a Supabase project at https://supabase.com
-- Run migrations (to be added in next phase)
+- Run the SQL files in `prisma/migrations` in numerical order
 - Add credentials to `.env.local`
 
 ### 4. Set Up Google OAuth
@@ -81,9 +81,9 @@ Visit `http://localhost:3000` in your browser.
 ## v0.1 Goals
 
 - [x] Project structure
-- [ ] Google authentication
+- [x] Google authentication
 - [ ] Supabase database setup
-- [ ] Landing page
+- [x] Landing page
 - [ ] Gmail connection flow
 - [ ] Email parsing (Amazon, Flipkart, etc.)
 - [ ] Purchase dashboard
@@ -91,7 +91,7 @@ Visit `http://localhost:3000` in your browser.
 
 ## Next Steps
 
-1. Implement authentication with NextAuth.js + Google OAuth
+1. ~~Implement authentication with NextAuth.js + Google OAuth~~ (done)
 2. Create database schema and Supabase setup
 3. Build landing and sign-in pages
 4. Implement Gmail connection and email search
@@ -108,3 +108,15 @@ Visit `http://localhost:3000` in your browser.
 ## License
 
 MIT
+
+## Implemented So Far
+
+- Added Google sign-in with NextAuth.js.
+- Connected authentication data storage to Supabase through Prisma.
+- Added and applied the Prisma database migrations.
+- Added the login page, protected dashboard, and sign-out flow.
+- Fixed dashboard authentication by removing Prisma from Next.js middleware and checking sessions server-side.
+- Added the initial Gmail connection flow with read-only OAuth access and token storage in Supabase.
+- Added a live Gmail scanning page that finds purchase-related emails and imports their metadata into `ParsedEmail`.
+- Added Amazon email parsing for order IDs, product details, totals, quantity, status, images, and delivery dates.
+- Added a purchases dashboard with search, retailer filters, and an expandable purchase-detail overlay.

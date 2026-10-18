@@ -89,12 +89,12 @@ export default function LandingPage() {
               Why vouch
             </a>
 
-            <a
-              href="#signin"
+            <Link
+              href="/auth/login"
               className="!text-black transition hover:opacity-60"
             >
-              Sign in
-            </a>
+              Sign up
+            </Link>
           </div>
 
           {/* Get Started Button */}

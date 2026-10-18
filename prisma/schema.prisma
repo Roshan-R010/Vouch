@@ -63,17 +63,27 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 model Purchase {
   id            String   @id @default(cuid())
   userId        String
 
   // Order details
-  orderId       String   @unique
+  orderId       String
   retailer      String   // Amazon, Flipkart, Meesho, Myntra, eBay, Shopify, Others
   productTitle  String
-  amount        Decimal  @db.Decimal(10, 2)
+  amount        Decimal? @db.Decimal(10, 2)
   currency      String   @default("INR")
   orderDate     DateTime
+  quantity      Int      @default(1)
+  orderStatus   String?
 
   // Images & Content
   productImage  String?
@@ -108,13 +118,14 @@ model Purchase {
   @@index([userId])
   @@index([retailer])
   @@index([orderDate])
+  @@unique([userId, retailer, orderId])
 }
 
 model ParsedEmail {
   id            String   @id @default(cuid())
 
   // Email details
-  gmailMessageId String  @unique
+  gmailMessageId String
   userId        String
   from          String
   subject       String
@@ -143,6 +154,7 @@ model ParsedEmail {
   @@index([userId])
   @@index([retailer])
   @@index([processed])
+  @@unique([userId, gmailMessageId])
 }
 
 model GmailSync {
